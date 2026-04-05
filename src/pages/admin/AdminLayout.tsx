@@ -36,9 +36,19 @@ export default function AdminLayout() {
   }, [user, profile, loading, navigate, signOut]);
 
   const handleLogout = async () => {
-    await signOut();
-    toast.success('Logged out successfully');
-    navigate('/admin/login');
+    try {
+      alert("Logout button clicked! Attempting to sign out...");
+      // Wrap sign out in a timeout to prevent hanging forever
+      await Promise.race([
+        signOut(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 2000))
+      ]);
+      toast.success('Logged out successfully');
+    } catch (err) {
+      alert("Sign out timed out or failed, forcing logout anyway!");
+    } finally {
+      navigate('/admin/login');
+    }
   };
 
   const menuItems = [
