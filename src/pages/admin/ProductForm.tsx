@@ -13,7 +13,7 @@ const productSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
   category_id: z.string().min(1, 'Please select a category'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
-  price: z.number().nullable().optional(),
+  price: z.union([z.number(), z.nan(), z.null()]).optional().transform(v => Number.isNaN(v) ? null : v),
   status: z.enum(['active', 'inactive']),
   specifications: z.array(z.object({
     key: z.string().min(1, 'Key required'),
@@ -21,7 +21,7 @@ const productSchema = z.object({
   })).optional(),
 });
 
-type ProductFormData = z.infer<typeof productSchema>;
+type ProductFormData = z.input<typeof productSchema>;
 
 export default function ProductForm() {
   const { id } = useParams();
@@ -74,6 +74,11 @@ export default function ProductForm() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    if (images.length + files.length > 8) {
+      toast.error('You can only upload a maximum of 8 images (1 Main + 7 Gallery).');
+      return;
+    }
+
     setUploading(true);
     const newImages = [...images];
 
@@ -105,6 +110,15 @@ export default function ProductForm() {
 
   const removeImage = (index: number) => {
     setImages(images.filter((_, i) => i !== index));
+  };
+
+  const setAsMainImage = (index: number) => {
+    if (index === 0) return;
+    const newImages = [...images];
+    const temp = newImages[0];
+    newImages[0] = newImages[index];
+    newImages[index] = temp;
+    setImages(newImages);
   };
 
   const onSubmit = async (data: ProductFormData) => {
@@ -270,45 +284,78 @@ export default function ProductForm() {
         <div className="space-y-8">
           {/* Images */}
           <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-6">
-            <h3 className="text-xl font-bold text-gray-900 flex items-center">
-              <ImageIcon className="w-5 h-5 mr-2 text-blue-600" />
-              Product Images
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                <ImageIcon className="w-5 h-5 mr-2 text-blue-600" />
+                Product Images
+              </h3>
+              <p className="text-xs font-bold text-gray-400">{images.length} / 8 Uploaded</p>
+            </div>
 
             <div className="grid grid-cols-2 gap-4">
               {images.map((img, idx) => (
-                <div key={idx} className="relative aspect-square rounded-2xl overflow-hidden border border-gray-100 group">
+                <div key={idx} className={cn(
+                  "relative aspect-square rounded-2xl overflow-hidden border-2 group",
+                  idx === 0 ? "border-blue-500 shadow-md col-span-2 row-span-2 aspect-video md:aspect-square md:col-span-1 md:row-span-1" : "border-gray-100"
+                )}>
                   <img src={img} alt="" className="w-full h-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(idx)}
-                    className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
+                  
+                  {/* Badges */}
+                  <div className="absolute top-2 left-2">
+                    {idx === 0 ? (
+                      <span className="px-2 py-1 bg-blue-600/90 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-sm">Main Image</span>
+                    ) : (
+                      <span className="px-2 py-1 bg-gray-900/60 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-sm">Gallery {idx}</span>
+                    )}
+                  </div>
+
+                  {/* Actions Overlay */}
+                  <div className="absolute inset-0 bg-gray-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
+                    {idx !== 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setAsMainImage(idx)}
+                        className="px-3 py-1.5 bg-white text-gray-900 text-xs font-bold rounded-lg shadow-lg hover:bg-gray-100 transition-all"
+                      >
+                        Set Main
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeImage(idx)}
+                      className="p-1.5 bg-red-500 text-white rounded-lg shadow-lg hover:bg-red-600 transition-all"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               ))}
-              <label className={cn(
-                "aspect-square rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all",
-                uploading && "opacity-50 cursor-not-allowed"
-              )}>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={uploading}
-                  className="hidden"
-                />
-                {uploading ? (
-                  <div className="w-6 h-6 border-2 border-blue-600/30 border-t-blue-600 rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <Plus className="w-6 h-6 text-gray-400 mb-2" />
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Upload</span>
-                  </>
-                )}
-              </label>
+
+              {images.length < 8 && (
+                <label className={cn(
+                  "aspect-square rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all",
+                  uploading && "opacity-50 cursor-not-allowed"
+                )}>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                    className="hidden"
+                  />
+                  {uploading ? (
+                    <div className="w-6 h-6 border-2 border-blue-600/30 border-t-blue-600 rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Plus className="w-6 h-6 text-gray-400 mb-2" />
+                      <span className="text-xs font-bold text-gray-400 uppercase tracking-wider text-center px-4">
+                        {images.length === 0 ? 'Upload Main Image' : 'Upload Gallery Image'}
+                      </span>
+                    </>
+                  )}
+                </label>
+              )}
             </div>
           </div>
 
