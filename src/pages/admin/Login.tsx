@@ -33,14 +33,27 @@ export default function AdminLogin() {
       if (error) throw error;
 
       if (data.user) {
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('users')
           .select('role')
           .eq('id', data.user.id)
           .maybeSingle();
 
-        if (profile?.role !== 'admin') {
-          toast.error('Access denied. Admin only.');
+        if (profileError) {
+          console.error("Profile fetch error:", profileError);
+          toast.error(`Database Error: ${profileError.message}`);
+          await supabase.auth.signOut();
+          return;
+        }
+
+        if (!profile) {
+            toast.error(`Profile not found for ID: ${data.user.id}`);
+            await supabase.auth.signOut();
+            return;
+        }
+
+        if (profile.role !== 'admin') {
+          toast.error(`Access denied. Your role is: ${profile.role}`);
           await supabase.auth.signOut();
           return;
         }
