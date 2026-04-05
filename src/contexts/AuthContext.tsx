@@ -21,39 +21,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
-    // Listen for changes on auth state (logged in, signed out, etc.)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!mounted) return;
-      
+    async function fetchSessionAndProfile(session: any) {
       setUser(session?.user ?? null);
-      
       if (session?.user) {
-        setLoading(true); // Set loading while fetching profile
         try {
-          // Add a tiny delay to allow gotrue internal state to settle during navigation/refresh
-          if (event === 'INITIAL_SESSION') {
-             await new Promise(r => setTimeout(r, 100));
-          }
-          const { data: profileData, error } = await supabase
+          const { data, error } = await supabase
             .from('users')
             .select('*')
             .eq('id', session.user.id)
             .maybeSingle();
-          
+
           if (error) console.error("Profile fetch error:", error);
-          if (mounted) setProfile(profileData);
+          if (mounted) setProfile(data);
         } catch (error) {
           console.error('Error fetching profile:', error);
           if (mounted) setProfile(null);
-        } finally {
-          if (mounted) setLoading(false);
         }
       } else {
-        if (mounted) {
-          setProfile(null);
-          setLoading(false);
-        }
+        if (mounted) setProfile(null);
       }
+      if (mounted) setLoading(false);
+    }
+
+    // Explicitly call getSession() to guarantee initialization
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (mounted) fetchSessionAndProfile(session);
+    });
+
+    // Listen for subsequent changes (login, logout, token refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Ignore initial session to prevent double-fetching deadlock
+      if (event === 'INITIAL_SESSION') return;
+      if (mounted) fetchSessionAndProfile(session);
     });
 
     return () => {
