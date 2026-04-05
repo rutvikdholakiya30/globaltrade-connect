@@ -4,6 +4,7 @@ import { Globe, ArrowLeft, ShieldCheck, Zap, Truck, CheckCircle2, Mail, Phone, M
 import { supabase } from '@/src/lib/supabase';
 import { Product } from '@/src/types';
 import { formatPrice, cn } from '@/src/lib/utils';
+import ProductCard from '@/src/components/ProductCard';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -11,6 +12,7 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -28,6 +30,18 @@ export default function ProductDetail() {
             ...data,
             category: data.categories
           });
+
+          // Fetch similar products in same category
+          const { data: similar } = await supabase
+            .from('products')
+            .select('*, categories(*)')
+            .eq('category_id', data.category_id)
+            .neq('id', id)
+            .limit(4);
+          
+          if (similar) {
+            setSimilarProducts(similar.map(p => ({ ...p, category: p.categories })));
+          }
         }
       } catch (error) {
         console.error('Error fetching product detail:', error);
@@ -271,7 +285,24 @@ export default function ProductDetail() {
         </Link>
       </div>
 
-      {/* Related Products Section could go here */}
+      {/* Similar Products Section */}
+      {similarProducts.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-24 border-t border-gray-100">
+           <div className="flex items-center justify-between mb-10">
+              <h2 className="text-2xl lg:text-3xl font-black text-gray-900">Similar Products</h2>
+              <Link to="/products" className="text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center">
+                 View All <ChevronRight className="w-4 h-4 ml-1" />
+              </Link>
+           </div>
+           
+           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
+              {similarProducts.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+           </div>
+        </div>
+      )}
+
       {/* Lightbox Modal */}
       {isLightboxOpen && (
         <div 
