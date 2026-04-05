@@ -3,10 +3,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Globe, Search, User } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { useAuth } from '@/src/contexts/AuthContext';
+import { supabase } from '@/src/lib/supabase';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activePages, setActivePages] = useState<string[]>([]);
   const { isAdmin } = useAuth();
   const location = useLocation();
 
@@ -15,14 +17,27 @@ export default function Navbar() {
       setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
+
+    async function fetchActivePages() {
+      const { data } = await supabase
+        .from('pages')
+        .select('name')
+        .eq('is_active', true);
+      
+      if (data) {
+        setActivePages(data.map(p => p.name));
+      }
+    }
+    fetchActivePages();
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Products', href: '/products' },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
+    ...(activePages.includes('about') ? [{ name: 'About', href: '/about' }] : []),
+    ...(activePages.includes('contact') ? [{ name: 'Contact', href: '/contact' }] : []),
   ];
 
   return (

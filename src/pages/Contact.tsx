@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Send, MessageSquare, Globe, Clock, CheckCircle2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'react-hot-toast';
 import { cn } from '@/src/lib/utils';
+import { Link } from 'react-router-dom';
+import { supabase } from '@/src/lib/supabase';
+import { Page } from '@/src/types';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -16,10 +19,26 @@ const contactSchema = z.object({
 type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function Contact() {
+  const [page, setPage] = useState<Page | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
   });
+
+  useEffect(() => {
+    async function fetchPage() {
+      const { data } = await supabase
+        .from('pages')
+        .select('*')
+        .eq('name', 'contact')
+        .eq('is_active', true)
+        .single();
+      if (data) setPage(data);
+      setLoading(false);
+    }
+    fetchPage();
+  }, []);
 
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
@@ -30,6 +49,20 @@ export default function Contact() {
     reset();
     setIsSubmitting(false);
   };
+
+  if (loading) return <div className="pt-40 text-center animate-pulse">Loading...</div>;
+
+  if (!page) {
+    return (
+      <div className="pt-40 pb-40 text-center space-y-6">
+        <h1 className="text-4xl font-black text-gray-900">Page Not Found</h1>
+        <p className="text-gray-500">This page is currently unavailable or has been removed.</p>
+        <Link to="/" className="inline-block px-8 py-3 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-colors">
+          Go Home
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <main className="pt-24 pb-24 bg-gray-50">

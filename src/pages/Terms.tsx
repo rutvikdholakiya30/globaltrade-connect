@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/src/lib/supabase';
 import { Page } from '@/src/types';
+import { Link } from 'react-router-dom';
 import { FileText, Scale, Gavel, AlertCircle } from 'lucide-react';
 
 export default function Terms() {
@@ -21,7 +22,19 @@ export default function Terms() {
     fetchPage();
   }, []);
 
-  if (loading) return <div className="pt-40 text-center">Loading...</div>;
+  if (loading) return <div className="pt-40 text-center animate-pulse">Loading...</div>;
+
+  if (!page) {
+    return (
+      <div className="pt-40 pb-40 text-center space-y-6">
+        <h1 className="text-4xl font-black text-gray-900">Page Not Found</h1>
+        <p className="text-gray-500">This page is currently unavailable or has been removed.</p>
+        <Link to="/" className="inline-block px-8 py-3 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-colors">
+          Go Home
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <main className="pt-24 pb-24 bg-gray-50">

@@ -1,9 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Globe, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
+import { supabase } from '@/src/lib/supabase';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [activePages, setActivePages] = useState<string[]>([]);
+
+  useEffect(() => {
+    async function fetchActivePages() {
+      const { data } = await supabase
+        .from('pages')
+        .select('name')
+        .eq('is_active', true);
+      
+      if (data) {
+        setActivePages(data.map(p => p.name));
+      }
+    }
+    fetchActivePages();
+  }, []);
 
   return (
     <footer className="bg-gray-900 text-gray-300">
@@ -36,8 +52,8 @@ export default function Footer() {
             <ul className="space-y-4 text-sm">
               <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
               <li><Link to="/products" className="hover:text-white transition-colors">Products</Link></li>
-              <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
-              <li><Link to="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
+              {activePages.includes('about') && <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>}
+              {activePages.includes('contact') && <li><Link to="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>}
             </ul>
           </div>
 
@@ -45,8 +61,8 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-6">Legal</h3>
             <ul className="space-y-4 text-sm">
-              <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="hover:text-white transition-colors">Terms & Conditions</Link></li>
+              {activePages.includes('privacy') && <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>}
+              {activePages.includes('terms') && <li><Link to="/terms" className="hover:text-white transition-colors">Terms & Conditions</Link></li>}
               <li><Link to="/admin" className="hover:text-white transition-colors">Admin Login</Link></li>
             </ul>
           </div>
