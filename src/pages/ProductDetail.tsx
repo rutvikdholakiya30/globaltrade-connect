@@ -205,25 +205,36 @@ export default function ProductDetail() {
               </div>
             )}
 
-            {/* Features Bar */}
-            <div className="grid grid-cols-3 gap-2 py-6 border-y border-gray-100">
-              <div className="flex flex-col items-center text-center space-y-2">
-                <div className="p-2.5 bg-blue-50 text-blue-600 rounded-full">
-                  <ShieldCheck className="w-5 h-5" />
+            {/* Premium B2B Trust Badges */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 py-4 lg:py-6">
+              <div className="flex items-center lg:flex-col lg:text-center p-4 bg-blue-50/30 rounded-2xl border border-blue-100/50 space-x-4 lg:space-x-0 lg:space-y-3 transition-all hover:shadow-md hover:bg-blue-50 group">
+                <div className="p-3 bg-white text-blue-600 rounded-xl shadow-sm group-hover:scale-110 transition-transform">
+                  <ShieldCheck className="w-6 h-6 lg:w-7 lg:h-7" />
                 </div>
-                <span className="text-[10px] font-extrabold text-gray-900 uppercase">Quality</span>
+                <div className="flex flex-col">
+                  <span className="text-xs lg:text-sm font-black text-gray-900 uppercase tracking-tight">Quality Assured</span>
+                  <span className="text-[10px] text-gray-500 font-medium hidden lg:block">IS0 9001 Certified</span>
+                </div>
               </div>
-              <div className="flex flex-col items-center text-center space-y-2 border-x border-gray-100">
-                <div className="p-2.5 bg-blue-50 text-blue-600 rounded-full">
-                  <Truck className="w-5 h-5" />
+              
+              <div className="flex items-center lg:flex-col lg:text-center p-4 bg-orange-50/30 rounded-2xl border border-orange-100/50 space-x-4 lg:space-x-0 lg:space-y-3 transition-all hover:shadow-md hover:bg-orange-50 group">
+                <div className="p-3 bg-white text-orange-600 rounded-xl shadow-sm group-hover:scale-110 transition-transform">
+                  <Truck className="w-6 h-6 lg:w-7 lg:h-7" />
                 </div>
-                <span className="text-[10px] font-extrabold text-gray-900 uppercase">Shipping</span>
+                <div className="flex flex-col">
+                  <span className="text-xs lg:text-sm font-black text-gray-900 uppercase tracking-tight">Global Export</span>
+                  <span className="text-[10px] text-gray-500 font-medium hidden lg:block">Door-to-door Logistics</span>
+                </div>
               </div>
-              <div className="flex flex-col items-center text-center space-y-2">
-                <div className="p-2.5 bg-blue-50 text-blue-600 rounded-full">
-                  <Zap className="w-5 h-5" />
+
+              <div className="flex items-center lg:flex-col lg:text-center p-4 bg-green-50/30 rounded-2xl border border-green-100/50 space-x-4 lg:space-x-0 lg:space-y-3 transition-all hover:shadow-md hover:bg-green-50 group">
+                <div className="p-3 bg-white text-green-600 rounded-xl shadow-sm group-hover:scale-110 transition-transform">
+                  <Zap className="w-6 h-6 lg:w-7 lg:h-7" />
                 </div>
-                <span className="text-[10px] font-extrabold text-gray-900 uppercase">Fast</span>
+                <div className="flex flex-col">
+                  <span className="text-xs lg:text-sm font-black text-gray-900 uppercase tracking-tight">Fast Response</span>
+                  <span className="text-[10px] text-gray-500 font-medium hidden lg:block">Quote in {"<"} 2 Hours</span>
+                </div>
               </div>
             </div>
 
