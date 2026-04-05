@@ -45,6 +45,18 @@ ALTER TABLE pages ENABLE ROW LEVEL SECURITY;
 
 -- 3. Create Policies
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can view their own profile." ON users;
+DROP POLICY IF EXISTS "Users can update their own profile." ON users;
+DROP POLICY IF EXISTS "Admin users can view all profiles." ON users;
+DROP POLICY IF EXISTS "Admin users can update all profiles." ON users;
+DROP POLICY IF EXISTS "Categories are viewable by everyone." ON categories;
+DROP POLICY IF EXISTS "Only admins can modify categories." ON categories;
+DROP POLICY IF EXISTS "Active products are viewable by everyone." ON products;
+DROP POLICY IF EXISTS "Only admins can modify products." ON products;
+DROP POLICY IF EXISTS "Active pages are viewable by everyone." ON pages;
+DROP POLICY IF EXISTS "Only admins can modify pages." ON pages;
+
 -- Users Policies
 CREATE POLICY "Users can view their own profile." ON users FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update their own profile." ON users FOR UPDATE USING (auth.uid() = id);
@@ -80,6 +92,10 @@ CREATE POLICY "Only admins can modify pages." ON pages FOR ALL USING (
 );
 
 -- 4. Create Functions and Triggers
+
+-- Drop existing trigger and function if they exist
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+DROP FUNCTION IF EXISTS public.handle_new_user();
 
 -- Function to handle new user signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
