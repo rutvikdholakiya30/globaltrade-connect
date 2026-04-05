@@ -179,20 +179,28 @@ export default function ProductDetail() {
               <p>{product.description}</p>
             </div>
 
-            {/* Specifications - Card Style for Mobile */}
+            {/* Specifications Table */}
             {product.specifications && Object.keys(product.specifications).length > 0 && (
               <div className="space-y-4">
                 <div className="flex items-center space-x-2 border-b border-gray-100 pb-2">
                    <ShieldCheck className="w-5 h-5 text-blue-600" />
-                   <h3 className="text-lg font-bold text-gray-900">Specifications</h3>
+                   <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wider">Technical Specifications</h3>
                 </div>
-                <div className="grid grid-cols-1 gap-1 lg:grid-cols-2 lg:gap-4">
-                  {Object.entries(product.specifications).map(([key, value]) => (
-                    <div key={key} className="flex items-center justify-between p-4 bg-gray-50/50 lg:bg-gray-50 rounded-xl lg:rounded-2xl border border-gray-50 lg:border-gray-100">
-                      <span className="text-xs lg:text-sm font-medium text-gray-500 flex-shrink-0 mr-4">{key}</span>
-                      <span className="text-xs lg:text-sm font-bold text-gray-900 text-right break-words max-w-[60%]">{value}</span>
-                    </div>
-                  ))}
+                <div className="overflow-hidden rounded-2xl border border-gray-100 shadow-sm">
+                  <table className="w-full text-left border-collapse">
+                    <tbody className="divide-y divide-gray-100">
+                      {Object.entries(product.specifications).map(([key, value], idx) => (
+                        <tr key={key} className={cn(idx % 2 === 0 ? "bg-white" : "bg-gray-50/50")}>
+                          <td className="px-5 py-4 text-xs lg:text-sm font-semibold text-gray-500 w-1/3 bg-gray-50/30">
+                            {key}
+                          </td>
+                          <td className="px-5 py-4 text-xs lg:text-sm font-bold text-gray-900 break-words">
+                            {value}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}
