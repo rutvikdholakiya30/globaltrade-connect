@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Globe, ArrowLeft, ShieldCheck, Zap, Truck, CheckCircle2, Mail, Phone, MessageSquare, ChevronRight } from 'lucide-react';
+import { Globe, ArrowLeft, ShieldCheck, Zap, Truck, CheckCircle2, Mail, Phone, MessageSquare, ChevronRight, ChevronLeft, X } from 'lucide-react';
 import { supabase } from '@/src/lib/supabase';
 import { Product } from '@/src/types';
 import { formatPrice, cn } from '@/src/lib/utils';
@@ -10,6 +10,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -70,6 +71,16 @@ export default function ProductDetail() {
 
   const images = product.images?.length > 0 ? product.images : ['https://picsum.photos/seed/product/800/800'];
 
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveImage((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveImage((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
   return (
     <main className="pt-24 pb-24 bg-white">
       {/* Breadcrumbs */}
@@ -89,13 +100,21 @@ export default function ProductDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Image Gallery */}
           <div className="space-y-6">
-            <div className="aspect-square bg-gray-50 rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm">
+            <div 
+              className="aspect-square bg-gray-50 rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm cursor-pointer relative group"
+              onClick={() => setIsLightboxOpen(true)}
+            >
               <img
                 src={images[activeImage]}
                 alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 referrerPolicy="no-referrer"
               />
+              <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <span className="bg-white/95 backdrop-blur-sm px-6 py-3 rounded-full text-sm font-bold text-gray-900 shadow-2xl transform scale-95 group-hover:scale-100 transition-all">
+                  View Full Screen
+                </span>
+              </div>
             </div>
             {images.length > 1 && (
               <div className="grid grid-cols-8 gap-2 sm:gap-3">
@@ -197,6 +216,49 @@ export default function ProductDetail() {
       </div>
 
       {/* Related Products Section could go here */}
+      {/* Lightbox Modal */}
+      {isLightboxOpen && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 sm:p-8 animate-in fade-in duration-200"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          <button 
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setIsLightboxOpen(false); }}
+            className="absolute top-6 right-6 p-3 text-gray-300 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all"
+          >
+            <X className="w-8 h-8" />
+          </button>
+          
+          {images.length > 1 && (
+            <button 
+              type="button"
+              onClick={prevImage}
+              className="absolute left-4 sm:left-12 top-1/2 -translate-y-1/2 p-4 text-gray-300 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all"
+            >
+              <ChevronLeft className="w-8 h-8" />
+            </button>
+          )}
+
+          <img 
+            src={images[activeImage]} 
+            alt={product.name}
+            className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300"
+            onClick={(e) => e.stopPropagation()}
+            referrerPolicy="no-referrer"
+          />
+
+          {images.length > 1 && (
+            <button 
+              type="button"
+              onClick={nextImage}
+              className="absolute right-4 sm:right-12 top-1/2 -translate-y-1/2 p-4 text-gray-300 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-all"
+            >
+              <ChevronRight className="w-8 h-8" />
+            </button>
+          )}
+        </div>
+      )}
     </main>
   );
 }
