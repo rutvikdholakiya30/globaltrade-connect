@@ -31,7 +31,7 @@ export default function ProductForm() {
   const [submitting, setSubmitting] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [listModes, setListModes] = useState<Record<number, boolean>>({});
+  const [listModes, setListModes] = useState<Record<number, 'none' | 'bullet' | 'number'>>({});
 
   const { register, handleSubmit, control, reset, setValue, watch, formState: { errors } } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
@@ -48,42 +48,49 @@ export default function ProductForm() {
 
   const specValues = watch('specifications');
 
-  const toggleListMode = (index: number, enabled: boolean) => {
-    setListModes(prev => ({ ...prev, [index]: enabled }));
-    const currentVal = specValues?.[index]?.value || '';
+  const toggleListMode = (index: number, mode: 'bullet' | 'number') => {
+    const currentMode = listModes[index];
+    const newMode = currentMode === mode ? 'none' : mode;
+    setListModes(prev => ({ ...prev, [index]: newMode }));
     
-    if (enabled) {
-      // Add bullets if missing
-      const newVal = currentVal.split('\n').map(line => {
-        const trimmed = line.trim();
-        if (trimmed === '') return line;
-        if (trimmed.startsWith('•')) return line;
-        return `• ${trimmed}`;
-      }).join('\n');
+    const currentVal = specValues?.[index]?.value || '';
+    const cleanLines = currentVal.split('\n').map(line => line.replace(/^[•\-\*]\s*|^\d+\.\s*/, '').trim());
+
+    if (newMode === 'bullet') {
+      const newVal = cleanLines.map(line => line === '' ? '' : `• ${line}`).join('\n');
+      setValue(`specifications.${index}.value`, newVal);
+    } else if (newMode === 'number') {
+      const newVal = cleanLines.map((line, i) => line === '' ? '' : `${i + 1}. ${line}`).join('\n');
       setValue(`specifications.${index}.value`, newVal);
     } else {
-      // Remove bullets
-      const newVal = currentVal.split('\n').map(line => {
-        return line.replace(/^[•\-\*]\s*/, '');
-      }).join('\n');
-      setValue(`specifications.${index}.value`, newVal);
+      setValue(`specifications.${index}.value`, cleanLines.join('\n'));
     }
   };
 
   const handleSpecKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>, index: number) => {
-    if (e.key === 'Enter' && listModes[index]) {
+    if (e.key === 'Enter' && listModes[index] !== 'none') {
       e.preventDefault();
       const textarea = e.currentTarget;
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
       const value = textarea.value;
       
-      const newValue = value.substring(0, start) + '\n• ' + value.substring(end);
+      const lines = value.substring(0, start).split('\n');
+      const currentLineCount = lines.length;
+      
+      let prefix = '\n• ';
+      let cursorOffset = 3;
+
+      if (listModes[index] === 'number') {
+        prefix = `\n${currentLineCount + 1}. `;
+        cursorOffset = prefix.length;
+      }
+      
+      const newValue = value.substring(0, start) + prefix + value.substring(end);
       setValue(`specifications.${index}.value`, newValue);
       
-      // Reset cursor position after React re-renders
       setTimeout(() => {
-        textarea.selectionStart = textarea.selectionEnd = start + 3;
+        textarea.selectionStart = textarea.selectionEnd = start + cursorOffset;
       }, 0);
     }
   };
@@ -99,10 +106,15 @@ export default function ProductForm() {
           const specs = prod.specifications ? Object.entries(prod.specifications).map(([key, value]) => ({ key, value: String(value) })) : [];
           
           // Auto-detect list modes
-          const initialListModes: Record<number, boolean> = {};
+          const initialListModes: Record<number, 'none' | 'bullet' | 'number'> = {};
           specs.forEach((s, idx) => {
-            if (s.value.split('\n').every(line => line.trim() === '' || line.trim().startsWith('•'))) {
-              initialListModes[idx] = true;
+            const lines = s.value.split('\n');
+            if (lines.every(line => line.trim() === '' || line.trim().startsWith('•'))) {
+              initialListModes[idx] = 'bullet';
+            } else if (lines.every((line, i) => line.trim() === '' || line.trim().startsWith(`${i + 1}.`))) {
+              initialListModes[idx] = 'number';
+            } else {
+              initialListModes[idx] = 'none';
             }
           });
           setListModes(initialListModes);
@@ -321,22 +333,33 @@ export default function ProductForm() {
                       <div className="space-y-1">
                         <div className="flex items-center justify-between px-2">
                            <label className="text-[10px] font-black text-gray-400 uppercase">Value</label>
-                           <label className="flex items-center space-x-1.5 cursor-pointer group/toggle">
-                              <input 
-                                type="checkbox" 
-                                checked={!!listModes[index]} 
-                                onChange={(e) => toggleListMode(index, e.target.checked)}
-                                className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                              />
-                              <span className="text-[10px] font-black text-gray-400 group-hover/toggle:text-blue-600 transition-colors uppercase">List Mode</span>
-                           </label>
+                           <div className="flex items-center space-x-3">
+                             <label className="flex items-center space-x-1.5 cursor-pointer group/toggle">
+                                <input 
+                                  type="checkbox" 
+                                  checked={listModes[index] === 'bullet'} 
+                                  onChange={() => toggleListMode(index, 'bullet')}
+                                  className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                />
+                                <span className={cn("text-[10px] font-black transition-colors uppercase", listModes[index] === 'bullet' ? "text-blue-600" : "text-gray-400 group-hover/toggle:text-blue-600")}>Bullets</span>
+                             </label>
+                             <label className="flex items-center space-x-1.5 cursor-pointer group/toggle">
+                                <input 
+                                  type="checkbox" 
+                                  checked={listModes[index] === 'number'} 
+                                  onChange={() => toggleListMode(index, 'number')}
+                                  className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                />
+                                <span className={cn("text-[10px] font-black transition-colors uppercase", listModes[index] === 'number' ? "text-blue-600" : "text-gray-400 group-hover/toggle:text-blue-600")}>Numbers</span>
+                             </label>
+                           </div>
                         </div>
                         <textarea
                           {...register(`specifications.${index}.value` as const)}
                           onKeyDown={(e) => handleSpecKeyDown(e, index)}
                           placeholder="e.g. Stainless Steel"
                           className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all min-h-[46px] resize-y font-medium text-gray-700"
-                          rows={listModes[index] ? 3 : 1}
+                          rows={listModes[index] !== 'none' ? 3 : 1}
                         />
                       </div>
                     </div>
