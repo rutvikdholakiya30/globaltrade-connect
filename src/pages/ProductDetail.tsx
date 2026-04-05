@@ -98,13 +98,13 @@ export default function ProductDetail() {
               />
             </div>
             {images.length > 1 && (
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-8 gap-2 sm:gap-3">
                 {images.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setActiveImage(idx)}
                     className={cn(
-                      "aspect-square rounded-2xl overflow-hidden border-2 transition-all",
+                      "aspect-square rounded-xl overflow-hidden border-2 transition-all",
                       activeImage === idx ? "border-blue-600 shadow-md" : "border-transparent hover:border-gray-200"
                     )}
                   >

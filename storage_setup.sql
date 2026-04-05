@@ -4,7 +4,7 @@ VALUES ('images', 'images', true)
 ON CONFLICT (id) DO NOTHING;
 
 -- 2. Enable RLS on storage.objects
-ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+-- Supabase already enables RLS on storage.objects by default.
 
 -- 3. Create policies for the 'images' bucket
 
