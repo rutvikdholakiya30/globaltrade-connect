@@ -18,8 +18,8 @@
   .prose-detail h2 { @apply text-xl font-black text-gray-900 mb-3 mt-6; }
   .prose-detail h3 { @apply text-lg font-bold text-gray-900 mb-2 mt-4; }
   .prose-detail p { @apply mb-4; }
-  .prose-detail ul { @apply list-disc list-outside mb-6 ml-5 space-y-2; }
-  .prose-detail ol { @apply list-decimal list-outside mb-6 ml-5 space-y-2; }
+  .prose-detail ul { @apply list-disc list-inside mb-6 space-y-2; }
+  .prose-detail ol { @apply list-decimal list-inside mb-6 space-y-2; }
   .prose-detail li { @apply pl-1; }
   .prose-detail a { @apply text-blue-600 underline font-bold; }
   .prose-detail strong { @apply text-gray-900 font-bold; }

@@ -204,11 +204,11 @@ export default function ProductDetail() {
                   <table className="w-full text-left border-collapse">
                     <tbody className="divide-y divide-gray-100">
                       {Object.entries(product.specifications).map(([key, value], idx) => (
-                        <tr key={key} className={cn(idx % 2 === 0 ? "bg-white" : "bg-gray-50/50")}>
-                          <td className="px-5 py-4 text-xs lg:text-sm font-semibold text-gray-500 w-1/3 bg-gray-50/30">
+                        <tr key={key} className="border-b last:border-0 border-gray-100 group hover:bg-gray-50/50 transition-colors">
+                          <td className="px-4 py-3 lg:px-6 lg:py-4 text-xs lg:text-sm font-semibold text-gray-500 w-1/3 bg-gray-50/30">
                             {key}
                           </td>
-                          <td className="px-5 py-4 text-xs lg:text-sm font-bold text-gray-900 break-words whitespace-pre-wrap">
+                          <td className="px-4 py-3 lg:px-6 lg:py-4 text-xs lg:text-sm font-bold text-gray-900 break-words whitespace-pre-wrap">
                             {value}
                           </td>
                         </tr>
