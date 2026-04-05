@@ -16,23 +16,33 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     async function fetchStats() {
-      const [productsRes, categoriesRes, pagesRes, recentRes] = await Promise.all([
-        supabase.from('products').select('id', { count: 'exact' }),
-        supabase.from('categories').select('id', { count: 'exact' }),
-        supabase.from('pages').select('id', { count: 'exact' }).eq('is_active', true),
-        supabase.from('products').select('*, categories(*)').order('created_at', { ascending: false }).limit(5)
-      ]);
+      try {
+        const [productsRes, categoriesRes, pagesRes, recentRes] = await Promise.all([
+          supabase.from('products').select('id', { count: 'exact', head: true }),
+          supabase.from('categories').select('id', { count: 'exact', head: true }),
+          supabase.from('pages').select('id', { count: 'exact', head: true }).eq('is_active', true),
+          supabase.from('products').select('*, categories(*)').order('created_at', { ascending: false }).limit(5)
+        ]);
 
-      setStats({
-        products: productsRes.count || 0,
-        categories: categoriesRes.count || 0,
-        activePages: pagesRes.count || 0,
-      });
+        if (productsRes.error) console.error("Products stat error:", productsRes.error);
+        if (categoriesRes.error) console.error("Categories stat error:", categoriesRes.error);
+        if (pagesRes.error) console.error("Pages stat error:", pagesRes.error);
+        if (recentRes.error) console.error("Recent products stat error:", recentRes.error);
 
-      if (recentRes.data) {
-        setRecentProducts(recentRes.data.map(p => ({ ...p, category: p.categories })));
+        setStats({
+          products: productsRes.count || 0,
+          categories: categoriesRes.count || 0,
+          activePages: pagesRes.count || 0,
+        });
+
+        if (recentRes.data && Array.isArray(recentRes.data)) {
+          setRecentProducts(recentRes.data.map(p => ({ ...p, category: p.categories })));
+        }
+      } catch (err) {
+        console.error("Dashboard fetchStats exception:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
 
     fetchStats();

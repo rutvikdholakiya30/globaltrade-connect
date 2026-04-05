@@ -57,27 +57,23 @@ DROP POLICY IF EXISTS "Only admins can modify products." ON products;
 DROP POLICY IF EXISTS "Active pages are viewable by everyone." ON pages;
 DROP POLICY IF EXISTS "Only admins can modify pages." ON pages;
 
+-- Create Admin Check Function
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+  SELECT EXISTS(
+    SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'
+  );
+$$ LANGUAGE sql SECURITY DEFINER;
+
 -- Users Policies
-CREATE POLICY "Users can view their own profile." ON users FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Users can update their own profile." ON users FOR UPDATE USING (auth.uid() = id);
-CREATE POLICY "Admin users can view all profiles." ON users FOR SELECT USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE id = auth.uid() AND role = 'admin'
-  )
-);
-CREATE POLICY "Admin users can update all profiles." ON users FOR UPDATE USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE id = auth.uid() AND role = 'admin'
-  )
-);
+CREATE POLICY "Users can view their own profile." ON public.users FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users can update their own profile." ON public.users FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Admin users can view all profiles." ON public.users FOR SELECT USING (public.is_admin());
+CREATE POLICY "Admin users can update all profiles." ON public.users FOR UPDATE USING (public.is_admin());
 
 -- Categories Policies
 CREATE POLICY "Categories are viewable by everyone." ON categories FOR SELECT USING (true);
-CREATE POLICY "Only admins can modify categories." ON categories FOR ALL USING (
-  EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
-);
+CREATE POLICY "Only admins can modify categories." ON categories FOR ALL USING (public.is_admin());
 
 -- Products Policies
 CREATE POLICY "Active products are viewable by everyone." ON products FOR SELECT USING (status = 'active' OR EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin'));
