@@ -14,7 +14,7 @@ import 'react-quill-new/dist/quill.snow.css';
 const productSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
   category_id: z.string().min(1, 'Please select a category'),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
+  description: z.string().optional().default(''),
   price: z.union([z.number(), z.nan(), z.null()]).optional().transform(v => Number.isNaN(v) ? null : v),
   status: z.enum(['active', 'inactive']),
   specifications: z.array(z.object({
@@ -39,6 +39,7 @@ export default function ProductForm() {
     resolver: zodResolver(productSchema),
     defaultValues: {
       status: 'active',
+      description: '',
       specifications: [{ key: '', value: '' }],
     }
   });
@@ -270,6 +271,7 @@ export default function ProductForm() {
               />
               {errors.name && <p className="text-xs font-bold text-red-500 ml-1">{errors.name.message}</p>}
             </div>
+
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">

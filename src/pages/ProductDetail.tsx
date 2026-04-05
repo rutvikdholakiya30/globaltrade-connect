@@ -212,7 +212,9 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            <div className="prose-detail" dangerouslySetInnerHTML={{ __html: product.description }} />
+            {product.description && product.description !== '<p><br></p>' && product.description.trim() !== '' && (
+              <div className="prose-detail" dangerouslySetInnerHTML={{ __html: product.description }} />
+            )}
 
             {/* Specifications Table */}
             {product.specifications && Object.keys(product.specifications).length > 0 && (
