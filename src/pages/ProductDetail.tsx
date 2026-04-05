@@ -175,7 +175,7 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            <div className="prose prose-blue max-w-none text-gray-600 text-sm lg:text-base leading-relaxed">
+            <div className="prose prose-blue max-w-none text-gray-600 text-sm lg:text-base leading-relaxed whitespace-pre-wrap break-words">
               <p>{product.description}</p>
             </div>
 
@@ -189,8 +189,8 @@ export default function ProductDetail() {
                 <div className="grid grid-cols-1 gap-1 lg:grid-cols-2 lg:gap-4">
                   {Object.entries(product.specifications).map(([key, value]) => (
                     <div key={key} className="flex items-center justify-between p-4 bg-gray-50/50 lg:bg-gray-50 rounded-xl lg:rounded-2xl border border-gray-50 lg:border-gray-100">
-                      <span className="text-xs lg:text-sm font-medium text-gray-500">{key}</span>
-                      <span className="text-xs lg:text-sm font-bold text-gray-900">{value}</span>
+                      <span className="text-xs lg:text-sm font-medium text-gray-500 flex-shrink-0 mr-4">{key}</span>
+                      <span className="text-xs lg:text-sm font-bold text-gray-900 text-right break-words max-w-[60%]">{value}</span>
                     </div>
                   ))}
                 </div>
