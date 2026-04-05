@@ -272,13 +272,13 @@ export default function ProductDetail() {
 
       {/* Sticky Bottom Active Bar - Native App Feel for Mobile ONLY */}
       <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-gray-100 p-4 lg:hidden z-40 flex space-x-3 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
-        <button className="flex-1 px-6 py-4 bg-gray-900 text-white text-sm font-bold rounded-2xl flex items-center justify-center space-x-2">
+        <button className="flex-1 px-6 py-4 bg-gray-900 text-white text-sm font-bold rounded-2xl flex items-center justify-center space-x-2 active:scale-95 transition-transform">
           <Phone className="w-5 h-5" />
           <span>Call Now</span>
         </button>
         <Link
           to="/contact"
-          className="flex-[1.5] px-6 py-4 bg-blue-600 text-white text-sm font-bold rounded-2xl flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/25"
+          className="flex-1 px-6 py-4 bg-blue-600 text-white text-sm font-bold rounded-2xl flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/25 active:scale-95 transition-transform"
         >
           <MessageSquare className="w-5 h-5" />
           <span>Send Inquiry</span>
