@@ -5,9 +5,11 @@ import { supabase } from '@/src/lib/supabase';
 import { Category, Product } from '@/src/types';
 import { cn } from '@/src/lib/utils';
 import { toast } from 'react-hot-toast';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 
 const productSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
@@ -40,6 +42,16 @@ export default function ProductForm() {
       specifications: [{ key: '', value: '' }],
     }
   });
+
+  const quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['link'],
+      ['clean']
+    ],
+  };
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -286,17 +298,24 @@ export default function ProductForm() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 ml-1">Description</label>
-              <textarea
-                {...register('description')}
-                rows={6}
-                className={cn(
-                  "w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none",
-                  errors.description && "border-red-500 focus:ring-red-500/20 focus:border-red-500"
-                )}
-                placeholder="Describe the product features, benefits, and export details..."
-              />
+            <div className="space-y-4">
+              <label className="text-sm font-bold text-gray-700 ml-1 tracking-tight uppercase text-[10px]">Description</label>
+              <div className="bg-gray-50 border border-gray-200 rounded-[1.5rem] overflow-hidden focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition-all">
+                <Controller
+                  name="description"
+                  control={control}
+                  render={({ field }) => (
+                    <ReactQuill
+                      theme="snow"
+                      value={field.value}
+                      onChange={field.onChange}
+                      modules={quillModules}
+                      placeholder="Describe the product features, benefits, and export details..."
+                      className="bg-white"
+                    />
+                  )}
+                />
+              </div>
               {errors.description && <p className="text-xs font-bold text-red-500 ml-1">{errors.description.message}</p>}
             </div>
           </div>

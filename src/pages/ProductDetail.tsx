@@ -175,23 +175,23 @@ export default function ProductDetail() {
                   {product.category.name}
                 </span>
               )}
-              <h1 className="text-2xl lg:text-5xl font-black text-gray-900 tracking-tight leading-tight">
+              <h1 className="text-2xl lg:text-5xl font-black text-gray-900 leading-tight">
                 {product.name}
               </h1>
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="text-2xl lg:text-4xl font-black text-blue-600">
-                  {formatPrice(product.price)}
-                </span>
-                <span className="px-3 py-1 bg-green-50 text-green-600 text-[10px] font-bold rounded-full flex items-center">
-                  <CheckCircle2 className="w-3 h-3 mr-1 flex-shrink-0" />
-                  In Stock
-                </span>
+              <div className="flex items-center space-x-4">
+                 <span className="text-3xl lg:text-4xl font-black text-blue-600">
+                    {formatPrice(product.price)}
+                 </span>
+                 {product.status === 'active' && (
+                    <span className="px-2 py-1 bg-green-50 text-green-600 text-[10px] font-bold uppercase rounded-md border border-green-100 flex items-center">
+                       <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5 animate-pulse" />
+                       In Stock
+                    </span>
+                 )}
               </div>
             </div>
 
-            <div className="prose prose-blue max-w-none text-gray-600 text-sm lg:text-base leading-relaxed whitespace-pre-wrap break-words">
-              <p>{product.description}</p>
-            </div>
+            <div className="prose-detail" dangerouslySetInnerHTML={{ __html: product.description }} />
 
             {/* Specifications Table */}
             {product.specifications && Object.keys(product.specifications).length > 0 && (
