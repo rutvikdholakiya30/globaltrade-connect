@@ -15,75 +15,49 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check active sessions and sets the user
-    const getInitialSession = async () => {
-      const timeout = setTimeout(() => {
-        setLoading(false);
-      }, 5000); // 5 second timeout safety
-
-      try {
-        const url = import.meta.env.VITE_SUPABASE_URL;
-        if (!url || url.includes('placeholder')) {
-          setLoading(false);
-          clearTimeout(timeout);
-          return;
-        }
-
-        const { data: { session } } = await supabase.auth.getSession();
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          const { data: profileData } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', session.user.id)
-            .maybeSingle();
-          setProfile(profileData);
-        } else {
-          setProfile(null);
-        }
-      } catch (error) {
-        console.error('Error getting session:', error);
-        setUser(null);
-        setProfile(null);
-      } finally {
-        setLoading(false);
-        clearTimeout(timeout);
-      }
-    };
-
-    getInitialSession();
+    let mounted = true;
 
     // Listen for changes on auth state (logged in, signed out, etc.)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+      
       setUser(session?.user ?? null);
       
       if (session?.user) {
         setLoading(true); // Set loading while fetching profile
         try {
-          const { data: profileData } = await supabase
+          // Add a tiny delay to allow gotrue internal state to settle during navigation/refresh
+          if (event === 'INITIAL_SESSION') {
+             await new Promise(r => setTimeout(r, 100));
+          }
+          const { data: profileData, error } = await supabase
             .from('users')
             .select('*')
             .eq('id', session.user.id)
             .maybeSingle();
-          setProfile(profileData);
+          
+          if (error) console.error("Profile fetch error:", error);
+          if (mounted) setProfile(profileData);
         } catch (error) {
           console.error('Error fetching profile:', error);
-          setProfile(null);
+          if (mounted) setProfile(null);
         } finally {
-          setLoading(false);
+          if (mounted) setLoading(false);
         }
       } else {
-        setProfile(null);
-        setLoading(false);
+        if (mounted) {
+          setProfile(null);
+          setLoading(false);
+        }
       }
     });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, []);
