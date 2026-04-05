@@ -17,12 +17,21 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function fetchStats() {
       try {
-        const [productsRes, categoriesRes, pagesRes, recentRes] = await Promise.all([
+        const fetchPromise = Promise.all([
           supabase.from('products').select('id', { count: 'exact', head: true }),
           supabase.from('categories').select('id', { count: 'exact', head: true }),
           supabase.from('pages').select('id', { count: 'exact', head: true }).eq('is_active', true),
           supabase.from('products').select('*, categories(*)').order('created_at', { ascending: false }).limit(5)
         ]);
+
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("Supabase fetch timeout!")), 3000)
+        );
+
+        const [productsRes, categoriesRes, pagesRes, recentRes] = await (Promise.race([
+          fetchPromise,
+          timeoutPromise
+        ]) as Promise<any>);
 
         if (productsRes.error) console.error("Products stat error:", productsRes.error);
         if (categoriesRes.error) console.error("Categories stat error:", categoriesRes.error);
@@ -39,6 +48,7 @@ export default function AdminDashboard() {
           setRecentProducts(recentRes.data.map(p => ({ ...p, category: p.categories })));
         }
       } catch (err) {
+        alert("Dashboard fetch error: " + err.message);
         console.error("Dashboard fetchStats exception:", err);
       } finally {
         setLoading(false);
