@@ -93,7 +93,7 @@ export default function ProductDetail() {
   };
 
   return (
-    <main className="pt-24 pb-24 bg-white">
+    <main className="pt-20 pb-16 lg:pt-24 lg:pb-24 bg-white">
       {/* Breadcrumbs */}
       <div className="bg-gray-50 border-b border-gray-100 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -108,11 +108,11 @@ export default function ProductDetail() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
           {/* Image Gallery */}
           <div className="space-y-6">
             <div 
-              className="aspect-square bg-gray-50 rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm cursor-pointer relative group"
+              className="aspect-square bg-gray-50 rounded-3xl lg:rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm cursor-pointer relative group"
               onClick={() => setIsLightboxOpen(true)}
             >
               <img
@@ -122,7 +122,7 @@ export default function ProductDetail() {
                 referrerPolicy="no-referrer"
               />
               <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <span className="bg-white/95 backdrop-blur-sm px-6 py-3 rounded-full text-sm font-bold text-gray-900 shadow-2xl transform scale-95 group-hover:scale-100 transition-all">
+                <span className="bg-white/95 backdrop-blur-sm px-4 py-2 lg:px-6 lg:py-3 rounded-full text-xs lg:text-sm font-bold text-gray-900 shadow-2xl transform scale-95 group-hover:scale-100 transition-all">
                   View Full Screen
                 </span>
               </div>
@@ -153,15 +153,15 @@ export default function ProductDetail() {
                   {product.category.name}
                 </span>
               )}
-              <h1 className="text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
+              <h1 className="text-3xl lg:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
                 {product.name}
               </h1>
-              <div className="flex items-center space-x-4">
-                <span className="text-3xl font-bold text-blue-600">
+              <div className="flex flex-wrap items-center gap-3 lg:gap-4">
+                <span className="text-2xl lg:text-3xl font-bold text-blue-600">
                   {formatPrice(product.price)}
                 </span>
-                <span className="px-3 py-1 bg-green-50 text-green-600 text-xs font-bold rounded-full flex items-center">
-                  <CheckCircle2 className="w-3 h-3 mr-1" />
+                <span className="px-3 py-1.5 lg:py-1 bg-green-50 text-green-600 text-xs font-bold rounded-full flex items-center">
+                  <CheckCircle2 className="w-3 h-3 mr-1 flex-shrink-0" />
                   In Stock & Ready for Export
                 </span>
               </div>
@@ -212,12 +212,12 @@ export default function ProductDetail() {
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link
                 to="/contact"
-                className="flex-1 px-8 py-5 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center space-x-2"
+                className="flex-1 px-6 lg:px-8 py-4 lg:py-5 bg-blue-600 text-white font-bold rounded-xl lg:rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center space-x-2"
               >
                 <MessageSquare className="w-5 h-5" />
                 <span>Inquiry Now</span>
               </Link>
-              <button className="flex-1 px-8 py-5 bg-gray-900 text-white font-bold rounded-2xl hover:bg-gray-800 transition-all flex items-center justify-center space-x-2">
+              <button className="flex-1 px-6 lg:px-8 py-4 lg:py-5 bg-gray-900 text-white font-bold rounded-xl lg:rounded-2xl hover:bg-gray-800 transition-all flex items-center justify-center space-x-2">
                 <Phone className="w-5 h-5" />
                 <span>Call for Quote</span>
               </button>
