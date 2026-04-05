@@ -14,7 +14,7 @@ import 'react-quill-new/dist/quill.snow.css';
 const productSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
   category_id: z.string().min(1, 'Please select a category'),
-  description: z.string().optional().default(''),
+  description: z.any().optional(),
   price: z.union([z.number(), z.nan(), z.null()]).optional().transform(v => Number.isNaN(v) ? null : v),
   status: z.enum(['active', 'inactive']),
   specifications: z.array(z.object({
@@ -210,7 +210,7 @@ export default function ProductForm() {
       const payload = {
         name: data.name,
         category_id: data.category_id,
-        description: data.description,
+        description: data.description || '',
         price: data.price || null,
         status: data.status,
         specifications: specsObj,
