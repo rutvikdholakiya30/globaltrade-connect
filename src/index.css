@@ -11,11 +11,14 @@
 }
 
 @layer components {
-  .prose-detail {
-    @apply text-gray-600 text-sm lg:text-lg leading-relaxed lg:leading-loose;
+  .prose-detail, .prose-detail *, .ql-editor, .ql-editor * {
     word-break: normal !important;
     overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
     hyphens: none !important;
+  }
+  .prose-detail {
+    @apply text-gray-600 text-sm lg:text-lg leading-relaxed lg:leading-loose;
   }
   .prose-detail h1 { @apply text-2xl font-black text-gray-900 mb-4 mt-8; }
   .prose-detail h2 { @apply text-xl font-black text-gray-900 mb-3 mt-6; }
