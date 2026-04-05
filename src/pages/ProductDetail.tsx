@@ -200,21 +200,17 @@ export default function ProductDetail() {
                    <ShieldCheck className="w-5 h-5 text-blue-600" />
                    <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wider">Technical Specifications</h3>
                 </div>
-                <div className="overflow-hidden rounded-2xl border border-gray-100 shadow-sm">
-                  <table className="w-full text-left border-collapse">
-                    <tbody className="divide-y divide-gray-100">
-                      {Object.entries(product.specifications).map(([key, value], idx) => (
-                        <tr key={key} className="border-b last:border-0 border-gray-100 group hover:bg-gray-50/50 transition-colors">
-                          <td className="px-4 py-3 lg:px-6 lg:py-4 text-xs lg:text-sm font-semibold text-gray-500 w-1/3 bg-gray-50/30">
-                            {key}
-                          </td>
-                          <td className="px-4 py-3 lg:px-6 lg:py-4 text-xs lg:text-sm font-bold text-gray-900 break-normal whitespace-pre-wrap">
-                            {value}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="overflow-hidden rounded-2xl border border-gray-100 shadow-sm divide-y divide-gray-100">
+                  {Object.entries(product.specifications).map(([key, value]) => (
+                    <div key={key} className="flex flex-col lg:flex-row group hover:bg-gray-50/50 transition-colors">
+                      <div className="px-5 py-2 lg:px-6 lg:py-4 text-[10px] lg:text-sm font-black text-gray-400 uppercase tracking-widest lg:w-1/3 bg-gray-50/30 lg:bg-transparent border-b lg:border-b-0 lg:border-r border-gray-100">
+                        {key}
+                      </div>
+                      <div className="px-5 py-3 lg:px-6 lg:py-4 text-sm lg:text-base font-bold text-gray-900 break-words whitespace-pre-wrap lg:flex-1">
+                        {value}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
