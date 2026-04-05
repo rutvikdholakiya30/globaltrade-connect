@@ -18,7 +18,7 @@ export default function ProductCard({ product, className }: ProductCardProps) {
       "group bg-white rounded-[1.5rem] lg:rounded-2xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-white",
       className
     )}>
-      <Link to={`/products/${product.id}`} className="block relative aspect-square lg:aspect-[4/3] overflow-hidden bg-gray-50">
+      <Link to={`/products/${product.id}`} className="block relative aspect-square overflow-hidden bg-gray-50">
         <img
           src={mainImage}
           alt={product.name}
