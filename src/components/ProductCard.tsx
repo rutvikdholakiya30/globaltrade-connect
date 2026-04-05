@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShoppingCart, Info } from 'lucide-react';
 import { Product } from '@/src/types';
-import { formatPrice, cn } from '@/src/lib/utils';
+import { formatPrice, cn, stripHtml } from '@/src/lib/utils';
 
 interface ProductCardProps {
   product: Product;
@@ -41,7 +41,7 @@ export default function ProductCard({ product, className }: ProductCardProps) {
             </h3>
           </Link>
           <p className="text-[10px] lg:text-sm text-gray-500 line-clamp-1 lg:line-clamp-2 leading-relaxed">
-            {product.description}
+            {stripHtml(product.description)}
           </p>
         </div>
 
