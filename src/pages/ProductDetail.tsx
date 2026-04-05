@@ -205,35 +205,35 @@ export default function ProductDetail() {
               </div>
             )}
 
-            {/* Premium B2B Trust Badges */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 py-4 lg:py-6">
-              <div className="flex items-center lg:flex-col lg:text-center p-4 bg-blue-50/30 rounded-2xl border border-blue-100/50 space-x-4 lg:space-x-0 lg:space-y-3 transition-all hover:shadow-md hover:bg-blue-50 group">
+            {/* Premium B2B Trust Badges - Desktop & Mobile consistency */}
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-3 lg:gap-6 py-4 lg:py-6">
+              <div className="flex items-center p-4 bg-blue-50/30 rounded-2xl border border-blue-100/50 space-x-4 lg:flex-col lg:text-center lg:space-x-0 lg:space-y-3 transition-all hover:shadow-md hover:bg-blue-50 group">
                 <div className="p-3 bg-white text-blue-600 rounded-xl shadow-sm group-hover:scale-110 transition-transform">
                   <ShieldCheck className="w-6 h-6 lg:w-7 lg:h-7" />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs lg:text-sm font-black text-gray-900 uppercase tracking-tight">Quality Assured</span>
-                  <span className="text-[10px] text-gray-500 font-medium hidden lg:block">IS0 9001 Certified</span>
+                  <span className="text-[10px] text-gray-500 font-bold">IS0 9001 Certified</span>
                 </div>
               </div>
               
-              <div className="flex items-center lg:flex-col lg:text-center p-4 bg-orange-50/30 rounded-2xl border border-orange-100/50 space-x-4 lg:space-x-0 lg:space-y-3 transition-all hover:shadow-md hover:bg-orange-50 group">
+              <div className="flex items-center p-4 bg-orange-50/30 rounded-2xl border border-orange-100/50 space-x-4 lg:flex-col lg:text-center lg:space-x-0 lg:space-y-3 transition-all hover:shadow-md hover:bg-orange-50 group">
                 <div className="p-3 bg-white text-orange-600 rounded-xl shadow-sm group-hover:scale-110 transition-transform">
                   <Truck className="w-6 h-6 lg:w-7 lg:h-7" />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs lg:text-sm font-black text-gray-900 uppercase tracking-tight">Global Export</span>
-                  <span className="text-[10px] text-gray-500 font-medium hidden lg:block">Door-to-door Logistics</span>
+                  <span className="text-[10px] text-gray-500 font-bold">Door-to-door Logistics</span>
                 </div>
               </div>
 
-              <div className="flex items-center lg:flex-col lg:text-center p-4 bg-green-50/30 rounded-2xl border border-green-100/50 space-x-4 lg:space-x-0 lg:space-y-3 transition-all hover:shadow-md hover:bg-green-50 group">
+              <div className="flex items-center p-4 bg-green-50/30 rounded-2xl border border-green-100/50 space-x-4 lg:flex-col lg:text-center lg:space-x-0 lg:space-y-3 transition-all hover:shadow-md hover:bg-green-50 group">
                 <div className="p-3 bg-white text-green-600 rounded-xl shadow-sm group-hover:scale-110 transition-transform">
                   <Zap className="w-6 h-6 lg:w-7 lg:h-7" />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs lg:text-sm font-black text-gray-900 uppercase tracking-tight">Fast Response</span>
-                  <span className="text-[10px] text-gray-500 font-medium hidden lg:block">Quote in {"<"} 2 Hours</span>
+                  <span className="text-[10px] text-gray-500 font-bold">Quote in {"<"} 2 Hours</span>
                 </div>
               </div>
             </div>
