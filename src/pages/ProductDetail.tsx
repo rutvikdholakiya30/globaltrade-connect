@@ -208,7 +208,7 @@ export default function ProductDetail() {
                           <td className="px-5 py-4 text-xs lg:text-sm font-semibold text-gray-500 w-1/3 bg-gray-50/30">
                             {key}
                           </td>
-                          <td className="px-5 py-4 text-xs lg:text-sm font-bold text-gray-900 break-words">
+                          <td className="px-5 py-4 text-xs lg:text-sm font-bold text-gray-900 break-words whitespace-pre-wrap">
                             {value}
                           </td>
                         </tr>
