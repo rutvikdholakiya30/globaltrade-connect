@@ -175,7 +175,7 @@ export default function ProductDetail() {
                   {product.category.name}
                 </span>
               )}
-              <h1 className="text-2xl lg:text-5xl font-black text-gray-900 leading-tight break-words">
+              <h1 className="text-2xl lg:text-5xl font-black text-gray-900 leading-tight">
                 {product.name}
               </h1>
               <div className="flex items-center space-x-4">
@@ -208,7 +208,7 @@ export default function ProductDetail() {
                           <td className="px-4 py-3 lg:px-6 lg:py-4 text-xs lg:text-sm font-semibold text-gray-500 w-1/3 bg-gray-50/30">
                             {key}
                           </td>
-                          <td className="px-4 py-3 lg:px-6 lg:py-4 text-xs lg:text-sm font-bold text-gray-900 break-words whitespace-pre-wrap">
+                          <td className="px-4 py-3 lg:px-6 lg:py-4 text-xs lg:text-sm font-bold text-gray-900 break-words">
                             {value}
                           </td>
                         </tr>
