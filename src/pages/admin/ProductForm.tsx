@@ -31,8 +31,9 @@ export default function ProductForm() {
   const [submitting, setSubmitting] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [listModes, setListModes] = useState<Record<number, boolean>>({});
 
-  const { register, handleSubmit, control, reset, formState: { errors } } = useForm<ProductFormData>({
+  const { register, handleSubmit, control, reset, setValue, watch, formState: { errors } } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       status: 'active',
@@ -45,6 +46,48 @@ export default function ProductForm() {
     name: 'specifications'
   });
 
+  const specValues = watch('specifications');
+
+  const toggleListMode = (index: number, enabled: boolean) => {
+    setListModes(prev => ({ ...prev, [index]: enabled }));
+    const currentVal = specValues?.[index]?.value || '';
+    
+    if (enabled) {
+      // Add bullets if missing
+      const newVal = currentVal.split('\n').map(line => {
+        const trimmed = line.trim();
+        if (trimmed === '') return line;
+        if (trimmed.startsWith('•')) return line;
+        return `• ${trimmed}`;
+      }).join('\n');
+      setValue(`specifications.${index}.value`, newVal);
+    } else {
+      // Remove bullets
+      const newVal = currentVal.split('\n').map(line => {
+        return line.replace(/^[•\-\*]\s*/, '');
+      }).join('\n');
+      setValue(`specifications.${index}.value`, newVal);
+    }
+  };
+
+  const handleSpecKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>, index: number) => {
+    if (e.key === 'Enter' && listModes[index]) {
+      e.preventDefault();
+      const textarea = e.currentTarget;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const value = textarea.value;
+      
+      const newValue = value.substring(0, start) + '\n• ' + value.substring(end);
+      setValue(`specifications.${index}.value`, newValue);
+      
+      // Reset cursor position after React re-renders
+      setTimeout(() => {
+        textarea.selectionStart = textarea.selectionEnd = start + 3;
+      }, 0);
+    }
+  };
+
   useEffect(() => {
     async function fetchData() {
       const { data: cats } = await supabase.from('categories').select('*').order('name');
@@ -54,6 +97,16 @@ export default function ProductForm() {
         const { data: prod } = await supabase.from('products').select('*').eq('id', id).single();
         if (prod) {
           const specs = prod.specifications ? Object.entries(prod.specifications).map(([key, value]) => ({ key, value: String(value) })) : [];
+          
+          // Auto-detect list modes
+          const initialListModes: Record<number, boolean> = {};
+          specs.forEach((s, idx) => {
+            if (s.value.split('\n').every(line => line.trim() === '' || line.trim().startsWith('•'))) {
+              initialListModes[idx] = true;
+            }
+          });
+          setListModes(initialListModes);
+
           reset({
             name: prod.name,
             category_id: prod.category_id,
@@ -252,26 +305,46 @@ export default function ProductForm() {
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
               {fields.map((field, index) => (
-                <div key={field.id} className="flex items-start space-x-4 group">
-                  <div className="flex-1 grid grid-cols-2 gap-4">
-                    <input
-                      {...register(`specifications.${index}.key` as const)}
-                      placeholder="Label (e.g. Material)"
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                    />
-                    <textarea
-                      {...register(`specifications.${index}.value` as const)}
-                      placeholder="Value (e.g. Stainless Steel)"
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all min-h-[46px] resize-y"
-                      rows={1}
-                    />
+                <div key={field.id} className="flex items-start space-x-4 p-4 bg-gray-50/50 rounded-[2rem] border border-gray-100 group transition-all hover:bg-white hover:shadow-md">
+                  <div className="flex-1 space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black text-gray-400 uppercase ml-2">Label</label>
+                        <input
+                          {...register(`specifications.${index}.key` as const)}
+                          placeholder="e.g. Material"
+                          className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold text-gray-900"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between px-2">
+                           <label className="text-[10px] font-black text-gray-400 uppercase">Value</label>
+                           <label className="flex items-center space-x-1.5 cursor-pointer group/toggle">
+                              <input 
+                                type="checkbox" 
+                                checked={!!listModes[index]} 
+                                onChange={(e) => toggleListMode(index, e.target.checked)}
+                                className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                              />
+                              <span className="text-[10px] font-black text-gray-400 group-hover/toggle:text-blue-600 transition-colors uppercase">List Mode</span>
+                           </label>
+                        </div>
+                        <textarea
+                          {...register(`specifications.${index}.value` as const)}
+                          onKeyDown={(e) => handleSpecKeyDown(e, index)}
+                          placeholder="e.g. Stainless Steel"
+                          className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all min-h-[46px] resize-y font-medium text-gray-700"
+                          rows={listModes[index] ? 3 : 1}
+                        />
+                      </div>
+                    </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => remove(index)}
-                    className="p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                    className="p-3 mt-5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>
