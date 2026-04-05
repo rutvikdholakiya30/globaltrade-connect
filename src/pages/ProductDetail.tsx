@@ -94,136 +94,164 @@ export default function ProductDetail() {
 
   return (
     <main className="pt-20 pb-16 lg:pt-24 lg:pb-24 bg-white">
-      {/* Breadcrumbs */}
-      <div className="bg-gray-50 border-b border-gray-100 py-4">
+      {/* Breadcrumbs - Hidden on Mobile */}
+      <div className="hidden lg:block bg-gray-50 border-b border-gray-100 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center space-x-2 text-sm font-medium text-gray-500">
-            <Link to="/" className="hover:text-blue-600">Home</Link>
+            <Link to="/" className="hover:text-blue-600 font-bold">Home</Link>
             <ChevronRight className="w-4 h-4" />
-            <Link to="/products" className="hover:text-blue-600">Products</Link>
+            <Link to="/products" className="hover:text-blue-600 font-bold">Products</Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-gray-900 truncate">{product.name}</span>
           </nav>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
-          {/* Image Gallery */}
-          <div className="space-y-6">
+      <div className="max-w-7xl mx-auto px-0 lg:px-8 pt-0 lg:pt-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-16">
+          {/* Image Gallery - Full Width on Mobile */}
+          <div className="space-y-4 lg:space-y-6">
             <div 
-              className="aspect-square bg-gray-50 rounded-3xl lg:rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm cursor-pointer relative group"
+              className="aspect-square bg-gray-100 lg:bg-gray-50 lg:rounded-[2.5rem] overflow-hidden lg:border border-gray-100 shadow-sm cursor-pointer relative group"
               onClick={() => setIsLightboxOpen(true)}
             >
               <img
                 src={images[activeImage]}
                 alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-500"
                 referrerPolicy="no-referrer"
               />
+              <div className="absolute top-4 left-4 lg:hidden">
+                 <Link to="/products" className="p-2 bg-white/80 backdrop-blur-md rounded-full shadow-lg inline-flex">
+                    <ArrowLeft className="w-5 h-5 text-gray-900" />
+                 </Link>
+              </div>
               <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <span className="bg-white/95 backdrop-blur-sm px-4 py-2 lg:px-6 lg:py-3 rounded-full text-xs lg:text-sm font-bold text-gray-900 shadow-2xl transform scale-95 group-hover:scale-100 transition-all">
+                <span className="bg-white/95 backdrop-blur-sm px-6 py-3 rounded-full text-sm font-bold text-gray-900 shadow-2xl transform scale-95 group-hover:scale-100 transition-all">
                   View Full Screen
                 </span>
               </div>
             </div>
+
             {images.length > 1 && (
-              <div className="grid grid-cols-8 gap-2 sm:gap-3">
-                {images.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveImage(idx)}
-                    className={cn(
-                      "aspect-square rounded-xl overflow-hidden border-2 transition-all",
-                      activeImage === idx ? "border-blue-600 shadow-md" : "border-transparent hover:border-gray-200"
-                    )}
-                  >
-                    <img src={img} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                  </button>
-                ))}
+              <div className="px-4 lg:px-0">
+                <div className="flex space-x-3 overflow-x-auto pb-4 no-scrollbar lg:grid lg:grid-cols-8 lg:gap-3 lg:overflow-visible lg:pb-0">
+                  {images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveImage(idx)}
+                      className={cn(
+                        "flex-shrink-0 w-16 h-16 lg:w-full lg:h-full aspect-square rounded-xl overflow-hidden border-2 transition-all",
+                        activeImage === idx ? "border-blue-600 shadow-md" : "border-transparent lg:border-white/0 lg:hover:border-gray-200 bg-gray-50"
+                      )}
+                    >
+                      <img src={img} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
 
-          {/* Product Info */}
-          <div className="space-y-10">
+          {/* Product Info - Native App Style Padding */}
+          <div className="px-4 pb-32 lg:px-0 lg:pb-0 space-y-8 lg:space-y-10 pt-6 lg:pt-0">
             <div className="space-y-4">
               {product.category && (
-                <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wider rounded-full">
+                <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 text-[10px] lg:text-xs font-bold uppercase tracking-wider rounded-full">
                   {product.category.name}
                 </span>
               )}
-              <h1 className="text-3xl lg:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
+              <h1 className="text-2xl lg:text-5xl font-black text-gray-900 tracking-tight leading-tight">
                 {product.name}
               </h1>
-              <div className="flex flex-wrap items-center gap-3 lg:gap-4">
-                <span className="text-2xl lg:text-3xl font-bold text-blue-600">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-2xl lg:text-4xl font-black text-blue-600">
                   {formatPrice(product.price)}
                 </span>
-                <span className="px-3 py-1.5 lg:py-1 bg-green-50 text-green-600 text-xs font-bold rounded-full flex items-center">
+                <span className="px-3 py-1 bg-green-50 text-green-600 text-[10px] font-bold rounded-full flex items-center">
                   <CheckCircle2 className="w-3 h-3 mr-1 flex-shrink-0" />
-                  In Stock & Ready for Export
+                  In Stock
                 </span>
               </div>
             </div>
 
-            <div className="prose prose-blue max-w-none text-gray-600 leading-relaxed">
+            <div className="prose prose-blue max-w-none text-gray-600 text-sm lg:text-base leading-relaxed">
               <p>{product.description}</p>
             </div>
 
-            {/* Specifications */}
+            {/* Specifications - Card Style for Mobile */}
             {product.specifications && Object.keys(product.specifications).length > 0 && (
               <div className="space-y-4">
-                <h3 className="text-lg font-bold text-gray-900">Technical Specifications</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex items-center space-x-2 border-b border-gray-100 pb-2">
+                   <ShieldCheck className="w-5 h-5 text-blue-600" />
+                   <h3 className="text-lg font-bold text-gray-900">Specifications</h3>
+                </div>
+                <div className="grid grid-cols-1 gap-1 lg:grid-cols-2 lg:gap-4">
                   {Object.entries(product.specifications).map(([key, value]) => (
-                    <div key={key} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                      <span className="text-sm font-medium text-gray-500">{key}</span>
-                      <span className="text-sm font-bold text-gray-900">{value}</span>
+                    <div key={key} className="flex items-center justify-between p-4 bg-gray-50/50 lg:bg-gray-50 rounded-xl lg:rounded-2xl border border-gray-50 lg:border-gray-100">
+                      <span className="text-xs lg:text-sm font-medium text-gray-500">{key}</span>
+                      <span className="text-xs lg:text-sm font-bold text-gray-900">{value}</span>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Features */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 py-8 border-y border-gray-100">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
+            {/* Features Bar */}
+            <div className="grid grid-cols-3 gap-2 py-6 border-y border-gray-100">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <div className="p-2.5 bg-blue-50 text-blue-600 rounded-full">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
-                <span className="text-sm font-bold text-gray-700">Quality Assured</span>
+                <span className="text-[10px] font-extrabold text-gray-900 uppercase">Quality</span>
               </div>
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
+              <div className="flex flex-col items-center text-center space-y-2 border-x border-gray-100">
+                <div className="p-2.5 bg-blue-50 text-blue-600 rounded-full">
                   <Truck className="w-5 h-5" />
                 </div>
-                <span className="text-sm font-bold text-gray-700">Global Shipping</span>
+                <span className="text-[10px] font-extrabold text-gray-900 uppercase">Shipping</span>
               </div>
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <div className="p-2.5 bg-blue-50 text-blue-600 rounded-full">
                   <Zap className="w-5 h-5" />
                 </div>
-                <span className="text-sm font-bold text-gray-700">Fast Inquiry</span>
+                <span className="text-[10px] font-extrabold text-gray-900 uppercase">Fast</span>
               </div>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link
-                to="/contact"
-                className="flex-1 px-6 lg:px-8 py-4 lg:py-5 bg-blue-600 text-white font-bold rounded-xl lg:rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center space-x-2"
-              >
-                <MessageSquare className="w-5 h-5" />
-                <span>Inquiry Now</span>
-              </Link>
-              <button className="flex-1 px-6 lg:px-8 py-4 lg:py-5 bg-gray-900 text-white font-bold rounded-xl lg:rounded-2xl hover:bg-gray-800 transition-all flex items-center justify-center space-x-2">
-                <Phone className="w-5 h-5" />
-                <span>Call for Quote</span>
-              </button>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Sticky Bottom Active Bar - Native App Feel */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-gray-100 p-4 lg:hidden z-40 flex space-x-3 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
+        <button className="flex-1 px-6 py-4 bg-gray-900 text-white text-sm font-bold rounded-2xl flex items-center justify-center space-x-2">
+          <Phone className="w-5 h-5" />
+          <span>Call Now</span>
+        </button>
+        <Link
+          to="/contact"
+          className="flex-[1.5] px-6 py-4 bg-blue-600 text-white text-sm font-bold rounded-2xl flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/25"
+        >
+          <MessageSquare className="w-5 h-5" />
+          <span>Send Inquiry</span>
+        </Link>
+      </div>
+
+      {/* Desktop Version Action Area - Visible only on LG */}
+      <div className="hidden lg:block max-w-7xl mx-auto px-8 pb-20">
+         <div className="flex gap-4 max-w-[50%] ml-auto mt-[-80px] relative z-10">
+            <Link
+              to="/contact"
+              className="flex-1 px-8 py-5 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center space-x-2"
+            >
+              <MessageSquare className="w-5 h-5" />
+              <span>Inquiry Now</span>
+            </Link>
+            <button className="flex-1 px-8 py-5 bg-gray-900 text-white font-bold rounded-2xl hover:bg-gray-800 transition-all flex items-center justify-center space-x-2">
+              <Phone className="w-5 h-5" />
+              <span>Call for Quote</span>
+            </button>
+         </div>
       </div>
 
       {/* Related Products Section could go here */}
