@@ -261,10 +261,11 @@ export default function ProductForm() {
                       placeholder="Label (e.g. Material)"
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                     />
-                    <input
+                    <textarea
                       {...register(`specifications.${index}.value` as const)}
                       placeholder="Value (e.g. Stainless Steel)"
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all min-h-[46px] resize-y"
+                      rows={1}
                     />
                   </div>
                   <button
