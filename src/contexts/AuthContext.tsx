@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             .from('users')
             .select('*')
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
           setProfile(profileData);
         } else {
           setProfile(null);
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             .from('users')
             .select('*')
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
           setProfile(profileData);
         } catch (error) {
           console.error('Error fetching profile:', error);

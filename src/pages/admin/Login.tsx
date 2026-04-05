@@ -37,7 +37,7 @@ export default function AdminLogin() {
           .from('users')
           .select('role')
           .eq('id', data.user.id)
-          .single();
+          .maybeSingle();
 
         if (profile?.role !== 'admin') {
           toast.error('Access denied. Admin only.');
