@@ -39,6 +39,17 @@ export default function ProductDetail() {
     fetchProduct();
   }, [id]);
 
+  // Auto-rotate image slideshow every 20 seconds
+  useEffect(() => {
+    if (!product || !product.images || product.images.length <= 1 || isLightboxOpen) return;
+
+    const interval = setInterval(() => {
+      setActiveImage((prev) => (prev >= product.images.length - 1 ? 0 : prev + 1));
+    }, 20000);
+
+    return () => clearInterval(interval);
+  }, [product, isLightboxOpen]);
+
   if (loading) {
     return (
       <div className="pt-32 pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
