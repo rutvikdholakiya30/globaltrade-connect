@@ -19,7 +19,7 @@ import { toast } from 'react-hot-toast';
 
 export default function AdminLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const { user, isAdmin, loading, signOut } = useAuth();
+  const { user, profile, isAdmin, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -27,12 +27,13 @@ export default function AdminLayout() {
     if (!loading) {
       if (!user) {
         navigate('/admin/login');
-      } else if (!isAdmin) {
+      } else if (user && profile && profile.role !== 'admin') {
         toast.error('Access denied. Admin only.');
+        signOut();
         navigate('/admin/login');
       }
     }
-  }, [user, isAdmin, loading, navigate]);
+  }, [user, profile, loading, navigate, signOut]);
 
   const handleLogout = async () => {
     await signOut();

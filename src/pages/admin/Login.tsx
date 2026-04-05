@@ -11,14 +11,14 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { user, isAdmin, loading: authLoading } = useAuth();
+  const { user, profile, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!authLoading && user && isAdmin) {
+    if (!authLoading && user && profile && profile.role === 'admin') {
       navigate('/admin');
     }
-  }, [user, isAdmin, authLoading, navigate]);
+  }, [user, profile, authLoading, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

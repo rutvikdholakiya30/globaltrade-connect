@@ -43,9 +43,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             .eq('id', session.user.id)
             .single();
           setProfile(profileData);
+        } else {
+          setProfile(null);
         }
       } catch (error) {
         console.error('Error getting session:', error);
+        setUser(null);
+        setProfile(null);
       } finally {
         setLoading(false);
         clearTimeout(timeout);
@@ -59,16 +63,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        const { data: profileData } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        setProfile(profileData);
+        setLoading(true); // Set loading while fetching profile
+        try {
+          const { data: profileData } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+          setProfile(profileData);
+        } catch (error) {
+          console.error('Error fetching profile:', error);
+          setProfile(null);
+        } finally {
+          setLoading(false);
+        }
       } else {
         setProfile(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => {
