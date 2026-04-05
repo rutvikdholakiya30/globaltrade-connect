@@ -110,14 +110,16 @@ export default function ProductDetail() {
     if (!value) return null;
     return value.split('\n').map((line, i) => {
       const trimmed = line.trim();
-      // Match bullets (•, -, *, ·) or numbers (1., 1), etc)
-      const isBullet = /^[•\-\*\·⁃]/.test(trimmed);
-      const isNumbered = /^\d+[\.\)]\s/.test(trimmed);
+      // Match bullets or numbers at the start
+      const bulletMatch = trimmed.match(/^([•\-\*\·⁃]|\d+[\.\)]\s)(.*)/);
 
-      if (isBullet || isNumbered) {
+      if (bulletMatch) {
+        const marker = bulletMatch[1];
+        const text = bulletMatch[2];
         return (
-          <div key={i} className="pl-6 -indent-6 mb-1 last:mb-0 break-words">
-            {line}
+          <div key={i} className="flex items-start mb-1 last:mb-0 pr-2">
+            <span className="flex-shrink-0 w-5 text-gray-400 font-bold">{marker}</span>
+            <span className="flex-1 break-words">{text}</span>
           </div>
         );
       }
