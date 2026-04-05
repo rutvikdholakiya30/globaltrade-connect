@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Globe, Mail, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Globe, Mail, Lock, ArrowRight, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '@/src/lib/supabase';
 import { useAuth } from '@/src/contexts/AuthContext';
 import { toast } from 'react-hot-toast';
@@ -9,6 +9,7 @@ import { cn } from '@/src/lib/utils';
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -87,13 +88,21 @@ export default function AdminLogin() {
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
-                  type="password"
+                  type={passwordVisible ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-12 pr-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                  className="w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                   placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => setPasswordVisible(!passwordVisible)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-900"
+                  aria-label={passwordVisible ? 'Hide password' : 'Show password'}
+                >
+                  {passwordVisible ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
             </div>
 
