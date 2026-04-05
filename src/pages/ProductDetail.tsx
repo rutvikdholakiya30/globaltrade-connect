@@ -106,6 +106,25 @@ export default function ProductDetail() {
     setActiveImage((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   };
 
+  const renderSpecValue = (value: string) => {
+    if (!value) return null;
+    return value.split('\n').map((line, i) => {
+      const trimmed = line.trim();
+      // Match bullets (•, -, *, ·) or numbers (1., 1), etc)
+      const isBullet = /^[•\-\*\·⁃]/.test(trimmed);
+      const isNumbered = /^\d+[\.\)]\s/.test(trimmed);
+
+      if (isBullet || isNumbered) {
+        return (
+          <div key={i} className="pl-6 -indent-6 mb-1 last:mb-0 break-words">
+            {line}
+          </div>
+        );
+      }
+      return <div key={i} className="mb-1 last:mb-0 break-words">{line}</div>;
+    });
+  };
+
   return (
     <main className="pt-20 pb-16 lg:pt-24 lg:pb-24 bg-white">
       {/* Breadcrumbs - Hidden on Mobile */}
@@ -206,8 +225,8 @@ export default function ProductDetail() {
                       <div className="px-5 py-2 lg:px-6 lg:py-4 text-[10px] lg:text-sm font-black text-gray-400 uppercase tracking-widest lg:w-1/3 bg-gray-50/30 lg:bg-transparent border-b lg:border-b-0 lg:border-r border-gray-100">
                         {key}
                       </div>
-                      <div className="px-5 py-3 lg:px-6 lg:py-4 text-sm lg:text-base font-bold text-gray-900 break-words whitespace-pre-wrap lg:flex-1">
-                        {value}
+                      <div className="px-5 py-3 lg:px-6 lg:py-4 text-sm lg:text-base font-bold text-gray-900 break-words lg:flex-1">
+                        {renderSpecValue(value as string)}
                       </div>
                     </div>
                   ))}
