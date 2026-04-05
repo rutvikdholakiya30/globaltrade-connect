@@ -46,8 +46,20 @@ ALTER TABLE pages ENABLE ROW LEVEL SECURITY;
 -- 3. Create Policies
 
 -- Users Policies
-CREATE POLICY "Public profiles are viewable by everyone." ON users FOR SELECT USING (true);
+CREATE POLICY "Users can view their own profile." ON users FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update their own profile." ON users FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Admin users can view all profiles." ON users FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE id = auth.uid() AND role = 'admin'
+  )
+);
+CREATE POLICY "Admin users can update all profiles." ON users FOR UPDATE USING (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE id = auth.uid() AND role = 'admin'
+  )
+);
 
 -- Categories Policies
 CREATE POLICY "Categories are viewable by everyone." ON categories FOR SELECT USING (true);
@@ -66,6 +78,23 @@ CREATE POLICY "Active pages are viewable by everyone." ON pages FOR SELECT USING
 CREATE POLICY "Only admins can modify pages." ON pages FOR ALL USING (
   EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
 );
+
+-- 4. Create Functions and Triggers
+
+-- Function to handle new user signup
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.users (id, email, role)
+  VALUES (new.id, new.email, 'user');
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to automatically create profile on signup
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
 -- 4. Initial Data
 
