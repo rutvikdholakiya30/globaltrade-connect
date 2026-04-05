@@ -168,7 +168,7 @@ export default function ProductDetail() {
           </div>
 
           {/* Product Info - Native App Style Padding */}
-          <div className="px-4 pb-32 lg:px-0 lg:pb-0 space-y-8 lg:space-y-10 pt-6 lg:pt-0">
+          <div className="px-4 lg:px-0 space-y-8 lg:space-y-10 pt-6 lg:pt-0">
             <div className="space-y-4">
               {product.category && (
                 <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 text-[10px] lg:text-xs font-bold uppercase tracking-wider rounded-full">
@@ -287,9 +287,9 @@ export default function ProductDetail() {
 
       {/* Similar Products Section */}
       {similarProducts.length > 0 && (
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-24 border-t border-gray-100">
-           <div className="flex items-center justify-between mb-10">
-              <h2 className="text-2xl lg:text-3xl font-black text-gray-900">Similar Products</h2>
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 lg:py-24 border-t border-gray-100 pb-32 lg:pb-24">
+           <div className="flex items-center justify-between mb-6 lg:mb-10">
+              <h2 className="text-xl lg:text-3xl font-black text-gray-900">Similar Products</h2>
               <Link to="/products" className="text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center">
                  View All <ChevronRight className="w-4 h-4 ml-1" />
               </Link>
