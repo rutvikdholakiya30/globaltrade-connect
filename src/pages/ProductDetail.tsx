@@ -126,13 +126,13 @@ export default function ProductDetail() {
           {/* Image Gallery - Full Width on Mobile */}
           <div className="space-y-4 lg:space-y-6">
             <div 
-              className="aspect-square bg-gray-100 lg:bg-gray-50 lg:rounded-[2.5rem] overflow-hidden lg:border border-gray-100 shadow-sm cursor-pointer relative group"
+              className="aspect-square bg-white lg:bg-gray-50 lg:rounded-[2.5rem] overflow-hidden lg:border border-gray-100 shadow-sm cursor-pointer relative group"
               onClick={() => setIsLightboxOpen(true)}
             >
               <img
                 src={images[activeImage]}
                 alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-500"
+                className="w-full h-full object-contain transition-transform duration-500"
                 referrerPolicy="no-referrer"
               />
               <div className="absolute top-4 left-4 lg:hidden">
@@ -155,11 +155,11 @@ export default function ProductDetail() {
                       key={idx}
                       onClick={() => setActiveImage(idx)}
                       className={cn(
-                        "flex-shrink-0 w-16 h-16 lg:w-full lg:h-full aspect-square rounded-xl overflow-hidden border-2 transition-all",
-                        activeImage === idx ? "border-blue-600 shadow-md" : "border-transparent lg:border-white/0 lg:hover:border-gray-200 bg-gray-50"
+                        "flex-shrink-0 w-16 h-16 lg:w-full lg:h-full aspect-square rounded-xl overflow-hidden border-2 transition-all bg-white",
+                        activeImage === idx ? "border-blue-600 shadow-md" : "border-transparent lg:border-white/0 lg:hover:border-gray-200"
                       )}
                     >
-                      <img src={img} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      <img src={img} alt="" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
                     </button>
                   ))}
                 </div>
