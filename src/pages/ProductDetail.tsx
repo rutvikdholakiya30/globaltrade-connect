@@ -226,11 +226,26 @@ export default function ProductDetail() {
                 <span className="text-[10px] font-extrabold text-gray-900 uppercase">Fast</span>
               </div>
             </div>
+
+            {/* CTA Buttons - Desktop Only (Mobile has sticky bottom) */}
+            <div className="hidden lg:flex gap-4 pt-4">
+              <Link
+                to="/contact"
+                className="flex-1 px-8 py-5 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center space-x-2"
+              >
+                <MessageSquare className="w-5 h-5" />
+                <span>Inquiry Now</span>
+              </Link>
+              <button className="flex-1 px-8 py-5 bg-gray-900 text-white font-bold rounded-2xl hover:bg-gray-800 transition-all flex items-center justify-center space-x-2">
+                <Phone className="w-5 h-5" />
+                <span>Call for Quote</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Sticky Bottom Active Bar - Native App Feel */}
+      {/* Sticky Bottom Active Bar - Native App Feel for Mobile ONLY */}
       <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-gray-100 p-4 lg:hidden z-40 flex space-x-3 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
         <button className="flex-1 px-6 py-4 bg-gray-900 text-white text-sm font-bold rounded-2xl flex items-center justify-center space-x-2">
           <Phone className="w-5 h-5" />
@@ -243,23 +258,6 @@ export default function ProductDetail() {
           <MessageSquare className="w-5 h-5" />
           <span>Send Inquiry</span>
         </Link>
-      </div>
-
-      {/* Desktop Version Action Area - Visible only on LG */}
-      <div className="hidden lg:block max-w-7xl mx-auto px-8 pb-20">
-         <div className="flex gap-4 max-w-[50%] ml-auto mt-[-80px] relative z-10">
-            <Link
-              to="/contact"
-              className="flex-1 px-8 py-5 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center space-x-2"
-            >
-              <MessageSquare className="w-5 h-5" />
-              <span>Inquiry Now</span>
-            </Link>
-            <button className="flex-1 px-8 py-5 bg-gray-900 text-white font-bold rounded-2xl hover:bg-gray-800 transition-all flex items-center justify-center space-x-2">
-              <Phone className="w-5 h-5" />
-              <span>Call for Quote</span>
-            </button>
-         </div>
       </div>
 
       {/* Related Products Section could go here */}
