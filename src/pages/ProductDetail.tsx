@@ -175,7 +175,7 @@ export default function ProductDetail() {
                   {product.category.name}
                 </span>
               )}
-              <h1 className="text-2xl lg:text-5xl font-black text-gray-900 leading-tight">
+              <h1 className="text-2xl lg:text-5xl font-black text-gray-900 leading-tight break-words">
                 {product.name}
               </h1>
               <div className="flex items-center space-x-4">
